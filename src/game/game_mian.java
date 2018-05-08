@@ -160,7 +160,7 @@ public class game_mian extends Applet implements Runnable, KeyListener {
             currentblock.rotate();
             repaint();
         }
-        if(e.getKeyCode() ==  KeyEvent.VK_F4&&game_over) {
+        if(e.getKeyCode() ==  KeyEvent.VK_F4) {
             restart();
         	repaint();
         }
