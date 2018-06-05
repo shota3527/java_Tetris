@@ -164,6 +164,11 @@ public class game_mian extends Applet implements Runnable, KeyListener {
             restart();
         	repaint();
         }
+        if(e.getKeyCode() ==  KeyEvent.VK_F1) {
+        	currentblock.yy = 1;
+        	repaint();
+        }
+        
     }
     
     public void keyReleased(KeyEvent e) {
