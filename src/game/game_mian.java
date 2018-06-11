@@ -25,7 +25,8 @@ public class game_mian extends Applet implements Runnable, KeyListener {
 	public static int next_pattern;
 	public static int score=0;
 	public boolean game_over;
-    
+    Boolean isFastFoward=false;
+    public save_state saved_game;
     public void init() {
         setSize(200,270);
         setLayout(null);
@@ -36,8 +37,11 @@ public class game_mian extends Applet implements Runnable, KeyListener {
         bw=width/block;
         bh=height/block+4;
         rotation_table.generate_table();
-        Status = new boolean[bh][bh+1];
-        ColorStatus = new int[bh][bh+1];
+        Status = new boolean[bw][bh+1];
+        ColorStatus = new int[bw][bh+1];
+        saved_game = new save_state(bw,bh+1);
+//        System.out.println(Status.length);
+//        System.out.println(Status[0].length);
     }
     
     public void start() {
@@ -118,15 +122,19 @@ public class game_mian extends Applet implements Runnable, KeyListener {
     }
     public void run() {
     	restart();
+    	saved_game.saving_state(Status,ColorStatus,currentblock.pattern);
         while(th == Thread.currentThread()) {
             try {
-                Thread.sleep((long)(SPEED*(5000/(5000+score*0.5))));
+            	for(int i=0;i<100;i++) {
+                if(!isFastFoward) Thread.sleep((long)(SPEED*(50/(5000+score*0.5))));
+            	}
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             repaint();
             if(!game_over) currentblock.yy += 1;
             if(currentblock.collision_detect_bottom(currentblock.Status)) {
+            	isFastFoward=false;
             	currentblock.freezeblock();
         		for(int i=0;i<bw;i++) {
         			for(int j=0;j<4;j++) {
@@ -138,6 +146,7 @@ public class game_mian extends Applet implements Runnable, KeyListener {
         		}
         		generateblock();
             	fadeblock();
+            	saved_game.saving_state(Status,ColorStatus,currentblock.pattern);
             }
         }
     }
@@ -166,6 +175,15 @@ public class game_mian extends Applet implements Runnable, KeyListener {
         }
         if(e.getKeyCode() ==  KeyEvent.VK_F1) {
         	currentblock.yy = 1;
+        	repaint();
+        }
+        if(e.getKeyCode() ==  KeyEvent.VK_SPACE) {
+        	isFastFoward = true;
+        	repaint();
+        }
+        if(e.getKeyCode() ==  KeyEvent.VK_F2) {
+        	//saved_game.load_state(Status,ColorStatus,currentblock.pattern);
+        	saved_game.load_state(this);
         	repaint();
         }
         
